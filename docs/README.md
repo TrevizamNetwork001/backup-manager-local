@@ -3,6 +3,7 @@
 ## Implantação e operação
 
 - [Versão estável 1.1.0](RELEASE_1.1.0.md)
+- [GitHub, assinatura no Windows e publicação de updates](GITHUB_E_PUBLICACAO.md)
 
 - [Instalação](INSTALL.md)
 - [Implantação e atualização](DEPLOYMENT.md)

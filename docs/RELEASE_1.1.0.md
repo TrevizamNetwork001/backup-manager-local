@@ -34,9 +34,16 @@ serviços externos nesta promoção. Os timers habituais foram retomados.
 
 ## Distribuição assinada
 
-A publicação externa ainda depende da chave privada oficial correspondente à
-chave pública instalada e da URL HTTPS de distribuição. Não substituir a chave
-pública para contornar a ausência da chave privada.
+O par oficial Ed25519 foi confirmado no Windows: a chave pública corresponde
+à instalada e a assinatura de teste foi validada pelo proprietário. A privada
+permanece na estação do proprietário. A publicação externa ainda depende de
+executar a assinatura oficial nessa estação e configurar a distribuição HTTPS.
+Não substituir a chave pública instalada.
+
+O código foi enviado ao repositório privado `TrevizamNetwork001/backup-manager-local`,
+branch `main`, commit inicial `b602b5e`, com tag `v1.1.0`. O histórico anterior
+continua no servidor. Procedimento completo e pendências:
+[GITHUB_E_PUBLICACAO.md](GITHUB_E_PUBLICACAO.md).
 
 Na estação de release, usando o código desta versão:
 

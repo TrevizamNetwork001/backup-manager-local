@@ -1,5 +1,10 @@
 # Publicação de atualizações
 
+Para a implantação atual e o assistente Windows da primeira release, consulte
+[GITHUB_E_PUBLICACAO.md](GITHUB_E_PUBLICACAO.md). O procedimento abaixo é o
+publicador genérico para hospedagem estática; suas URLs não são URLs de anexos
+do GitHub Releases.
+
 Gere o `.bmu` e, em uma estação de release isolada, execute:
 
 ```bash

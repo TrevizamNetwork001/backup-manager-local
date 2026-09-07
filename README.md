@@ -29,6 +29,9 @@ Alertas e relatórios operacionais: [docs/NOTIFICATIONS.md](docs/NOTIFICATIONS.m
 
 Notas e validação da versão estável: [docs/RELEASE_1.1.0.md](docs/RELEASE_1.1.0.md).
 
+Código no GitHub, acesso SSH, assinatura no Windows e pendências de publicação:
+[docs/GITHUB_E_PUBLICACAO.md](docs/GITHUB_E_PUBLICACAO.md).
+
 ## Executar
 
 ```bash
