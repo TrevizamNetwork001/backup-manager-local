@@ -146,6 +146,22 @@ publicada, porque seus hashes e assinaturas podem estar em uso pelos clientes.
 O assistente gera apenas o índice inicial da 1.1.0. **Não usá-lo para versões
 futuras nem sobrepor um índice que já contenha outras releases.**
 
+Para automatizar a cópia do índice e a criação da Release, use
+[publish_1_1_0_github.ps1](release-tools/publish_1_1_0_github.ps1). Ele exige
+que o Git tenha acesso ao repositório de updates e, para publicar a Release sem
+interação, que o GitHub CLI (`gh`) esteja instalado e autenticado. Sem `gh`, ele
+publica o índice e mostra a etapa da Release para concluir pelo navegador.
+
+```powershell
+.\backup-manager-local-main\docs\release-tools\publish_1_1_0_github.ps1
+```
+
+O script usa uma pasta temporária para clonar o repositório, remove essa pasta
+ao terminar e nunca copia `update-private-key.pem` para ela. Antes de executar,
+confirme que o repositório de updates foi criado e que sua conta tem permissão
+de escrita. Para apenas gerar os artefatos sem publicar, use o assistente
+`prepare_1_1_0.ps1`.
+
 ## Criar a distribuição externa
 
 Destino proposto: `TrevizamNetwork001/backup-manager-updates`.
