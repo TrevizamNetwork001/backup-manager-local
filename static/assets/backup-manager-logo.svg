@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 38" role="img" aria-labelledby="title">
+  <title id="title">Backup Manager</title>
+  <path fill="#0eaa59" d="M16 1 29 7v10c0 9-5 15-13 20C8 32 3 26 3 17V7Z"/>
+  <g fill="none" stroke="#071923" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m9 12 7 4 7-4"/>
+    <path d="m9 18 7 4 7-4"/>
+    <path d="m9 24 7 4 7-4"/>
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+[Unit]
+Description=Backup Manager Local - atualiza snapshot operacional
+
+[Timer]
+OnBootSec=15s
+OnUnitActiveSec=30s
+AccuracySec=5s
+Persistent=true
+Unit=backup-manager-observability.service
+
+[Install]
+WantedBy=timers.target

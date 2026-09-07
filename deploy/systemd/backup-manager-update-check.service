@@ -1,0 +1,22 @@
+[Unit]
+Description=Backup Manager Local - consulta segura de atualizações
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# A instalacao 1.0 opera SQLite e storage como root; a migracao de ownership
+# deve ser feita como uma mudanca separada e coordenada.
+User=root
+Group=root
+WorkingDirectory=/opt/backup-manager-local
+ExecStart=/usr/bin/python3 -m backup_manager.cli update-check
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/backup-manager-local/data
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+TimeoutStartSec=90

@@ -1,0 +1,12 @@
+[Unit]
+Description=Backup Manager Local - varredura FTP recorrente
+
+[Timer]
+OnBootSec=45s
+OnUnitActiveSec=30s
+AccuracySec=5s
+Persistent=true
+Unit=backup-manager-ftp-importer.service
+
+[Install]
+WantedBy=timers.target

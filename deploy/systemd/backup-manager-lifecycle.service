@@ -1,0 +1,30 @@
+[Unit]
+Description=Backup Manager Local - ciclo de vida dos backups
+After=local-fs.target
+ConditionPathExists=/var/lib/backup-manager-local/backups
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/opt/backup-manager-local
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -m backup_manager.lifecycle_runner
+TimeoutStartSec=1800
+UMask=0027
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictRealtime=yes
+SystemCallArchitectures=native
+ReadWritePaths=/var/lib/backup-manager-local /opt/backup-manager-local/data
+
+[Install]
+WantedBy=multi-user.target

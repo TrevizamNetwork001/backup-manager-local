@@ -1,0 +1,51 @@
+<section class="dashboard-reference-page">
+  <header class="dashboard-reference-head">
+    <div><span class="eyebrow">Centro de Operações</span><h1>{{install_name}}</h1><p>{{provider}} · atualizado em {{generated_at}}</p></div>
+    <a class="dashboard-global-state status-{{level}}" href="#alertas-atuais" data-technical-level="{{technical_level}}">
+      <i><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></i>
+      <span><small>Estado geral</small><strong>{{level_label}}</strong><em>{{alert_count}}</em></span><b>Ver detalhes ›</b>
+    </a>
+  </header>
+
+  <section class="panel dashboard-command-center">
+    <div class="dashboard-actions">{{quick_actions}}</div>
+    <div class="dashboard-kpis">{{dashboard_kpis}}</div>
+    <div class="dashboard-service-health"><strong>Saúde dos serviços</strong><div>{{dashboard_services}}</div></div>
+  </section>
+
+  <section class="dashboard-reference-columns">
+    <div class="dashboard-reference-left">
+      <article class="panel dashboard-attention" id="alertas-atuais"><header><i><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></i><h2>Precisa de atenção</h2></header><ul>{{attention_lines}}</ul><a href="/jobs">Ver detalhes <span>→</span></a></article>
+      <article class="panel dashboard-activity"><h2>Atividade recente</h2><ul>{{activity_lines}}</ul>{{timeline_link}}</article>
+    </div>
+    <div class="dashboard-reference-right">
+      <article class="panel dashboard-upcoming"><header><i><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></i><h2>Próximas execuções</h2></header><ul>{{upcoming_lines}}</ul><a href="/jobs">Ver todos os agendamentos <span>→</span></a></article>
+      <article class="panel dashboard-running"><header><i><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v6h-6"/></svg></i><h2>Operações em andamento</h2></header>{{running_lines}}</article>
+      <article class="panel dashboard-critical"><header><i><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></i><h2>Equipamentos por criticidade</h2></header><div><table><thead><tr><th></th><th>Equipamento</th><th>Ambiente</th><th>Último backup</th><th>Método</th><th>Status</th></tr></thead><tbody>{{critical_equipment}}</tbody></table></div><a href="/equipment">Ver todos os equipamentos <span>→</span></a></article>
+    </div>
+  </section>
+
+  <section class="panel dashboard-environments"><header><i><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5.5 19.5V7.5L12 4l6.5 3.5v12M8.5 10h.01M12 10h.01M15.5 10h.01M8.5 13.5h.01M12 13.5h.01M15.5 13.5h.01M9.5 19.5v-3h5v3M4.5 19.5h15"/></svg></i><h2>Resumo por ambiente</h2></header><div>{{dashboard_environments}}</div><a href="/equipment">Ver todos os ambientes →</a></section>
+
+  <section class="panel dashboard-security status-{{security_level}}">
+    <header><i><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="M12 8v5M12 17h.01"/></svg></i><div><h2>Segurança de acesso</h2><p>Monitoramento de autenticação e possíveis ataques distribuídos</p></div><span class="badge status-{{security_level}}">{{security_label}}</span></header>
+    <div>{{security_html}}</div>
+    <a href="/audit#security-report">Ver relatório de segurança →</a>
+  </section>
+</section>
+<script>
+  (() => {
+    let hiddenAt = 0;
+    const refreshWhenReturned = () => {
+      if (document.visibilityState === "visible" && hiddenAt && Date.now() - hiddenAt >= 5000) {
+        window.location.reload();
+      }
+    };
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") hiddenAt = Date.now();
+      else refreshWhenReturned();
+    });
+    window.addEventListener("pageshow", refreshWhenReturned);
+    window.setTimeout(() => window.location.reload(), 30000);
+  })();
+</script>

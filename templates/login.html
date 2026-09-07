@@ -1,0 +1,19 @@
+<section class="login-reference-page" aria-label="Acesso ao Backup Manager Local">
+  <div class="login-network-layer" aria-hidden="true"></div>
+  <section class="login-brand-content">
+    <div class="login-brand-mark" aria-label="Backup Manager"><svg viewBox="0 0 48 48" role="img"><path d="M10 29h28a7 7 0 0 0 0-14 10 10 0 0 0-19-2 7 7 0 0 0-9 6 6 6 0 0 0 0 10Z"></path><path d="M24 28V17m0 0-4 4m4-4 4 4"></path><rect x="16" y="29" width="16" height="12" rx="2"></rect><path d="M19 33h.1M19 37h.1M23 33h6M23 37h6"></path></svg></div>
+    <div class="login-brand-name">Backup Manager</div>
+    <h1>Proteja o que é<br>essencial para sua<br>rede funcionar.</h1>
+    <p>Backups automáticos, centralizados e seguros<br>para OLTs, roteadores, switches e outros<br>equipamentos de rede.</p>
+    <ul><li>Backups automáticos e manuais</li><li>Organização por ambiente, POP e equipamento</li><li>Monitoramento de armazenamento e alertas</li><li>Armazenamento 100% local e seguro</li></ul>
+  </section>
+  <form method="post" action="/login" class="login-reference-form" autocomplete="off">
+    <div class="login-form-heading"><span class="login-lock" aria-hidden="true"><svg viewBox="0 0 24 24" role="img"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path><circle cx="12" cy="15" r="1"></circle></svg></span><div><h2>Acesso ao sistema</h2><p>Informe suas credenciais para continuar</p></div></div>
+    <label class="login-field login-user-label" for="login-username">Usuário</label>
+    <input id="login-username" class="login-reference-input login-username" name="username" autocomplete="username" placeholder="Digite seu usuário" required autofocus>
+    <label class="login-field login-password-label" for="login-password">Senha</label>
+    <input id="login-password" class="login-reference-input login-password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+    <button type="submit" class="login-reference-submit" aria-label="Entrar no sistema">↪ &nbsp; Entrar no sistema</button>
+    {{error_message}}
+  </form>
+</section>

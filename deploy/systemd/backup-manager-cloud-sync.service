@@ -1,0 +1,33 @@
+[Unit]
+Description=Backup Manager Local - sincronizacao externa via rclone
+After=local-fs.target
+ConditionPathExists=/var/lib/backup-manager-local/backups
+
+[Service]
+Type=oneshot
+# A instalação RC1 ainda opera storage/SQLite como root; migração de ownership fica fora desta fase.
+User=root
+Group=root
+WorkingDirectory=/opt/backup-manager-local
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=BACKUP_MANAGER_RCLONE_CONFIG=/etc/backup-manager-local/rclone.conf
+ExecStart=/usr/bin/python3 -m backup_manager.cloud_worker
+TimeoutStartSec=1h
+UMask=0027
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallArchitectures=native
+ReadWritePaths=/var/lib/backup-manager-local /opt/backup-manager-local/data
+
+[Install]
+WantedBy=multi-user.target

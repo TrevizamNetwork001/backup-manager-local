@@ -1,0 +1,12 @@
+[Unit]
+Description=Backup Manager Local - consulta periódica de atualizações
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=24h
+RandomizedDelaySec=30min
+Persistent=true
+Unit=backup-manager-update-check.service
+
+[Install]
+WantedBy=timers.target

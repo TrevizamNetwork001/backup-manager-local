@@ -1,0 +1,33 @@
+[Unit]
+Description=Backup Manager Local - cópia secundária para Telegram
+After=network-online.target local-fs.target
+Wants=network-online.target
+ConditionPathExists=/var/lib/backup-manager-local/backups
+
+[Service]
+Type=oneshot
+User=backup-manager-telegram
+Group=root
+WorkingDirectory=/opt/backup-manager-local
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -m backup_manager.telegram_worker
+TimeoutStartSec=10min
+UMask=0027
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallArchitectures=native
+ReadOnlyPaths=/var/lib/backup-manager-local/backups /var/lib/backup-manager-local/trash /var/lib/backup-manager-local/quarantine
+ReadWritePaths=/var/lib/backup-manager-local/temporary /opt/backup-manager-local/data
+
+[Install]
+WantedBy=multi-user.target

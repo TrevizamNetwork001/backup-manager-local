@@ -1,0 +1,2 @@
+# Validar com: visudo -cf /etc/sudoers.d/backup-manager-ftp
+www-data ALL=(root) NOPASSWD: /usr/local/sbin/backup-manager-ftp-admin create-or-update-account --account-id *, /usr/local/sbin/backup-manager-ftp-admin disable-account --account-id *, /usr/local/sbin/backup-manager-ftp-admin check-account --account-id *

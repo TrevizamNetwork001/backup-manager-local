@@ -1,0 +1,14 @@
+[Unit]
+Description=Backup Manager Local Worker
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/backup-manager-local
+Environment=BACKUP_MANAGER_HOME=/opt/backup-manager-local
+Environment=BACKUP_MANAGER_DATA=/opt/backup-manager-local/data
+Environment=BACKUP_MANAGER_DB=/opt/backup-manager-local/data/backup_manager.sqlite3
+ExecStart=/usr/bin/python3 -m backup_manager.worker
+UMask=0027
+User=root
+Group=root

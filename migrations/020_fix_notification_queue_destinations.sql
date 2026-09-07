@@ -1,0 +1,3 @@
+-- Reparo incremental para instalações RC em que 017 foi registrada antes de
+-- destination_id/thread_id chegarem ao schema. O runner aplica ADD COLUMN
+-- condicionalmente e cria índices na mesma transação. Nenhuma tabela é recriada.

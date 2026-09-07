@@ -1,0 +1,18 @@
+[Unit]
+Description=Backup Manager Local - snapshot seguro de serviços
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/opt/backup-manager-local
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -m backup_manager.service_snapshot
+TimeoutStartSec=30
+UMask=0027
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/backup-manager-local/data
+

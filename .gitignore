@@ -1,0 +1,27 @@
+data/
+__pycache__/
+*.pyc
+.coverage
+*.sqlite3
+*.sqlite3.*
+/var/
+
+# Referencia visual local; nao faz parte dos assets do produto.
+ideias.png
+dash.png
+tela01.png
+trocasenha.png
+
+# Chaves e credenciais locais de assinatura e integracao.
+*.key
+*.pem
+.env
+.env.*
+!.env.example
+
+# Artefatos locais fora do codigo-fonte distribuido.
+/chatgpt-mcp-staging/
+/img/
+/systemd/
+/GeoLite2-*/
+/GeoLite2-*.tar.gz

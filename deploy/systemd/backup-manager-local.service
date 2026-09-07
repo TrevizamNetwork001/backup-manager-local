@@ -1,0 +1,21 @@
+[Unit]
+Description=Backup Manager Local
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/backup-manager-local
+Environment=BACKUP_MANAGER_HOME=/opt/backup-manager-local
+Environment=BACKUP_MANAGER_DATA=/opt/backup-manager-local/data
+Environment=BACKUP_MANAGER_DB=/opt/backup-manager-local/data/backup_manager.sqlite3
+Environment=BACKUP_MANAGER_HOST=127.0.0.1
+Environment=BACKUP_MANAGER_PORT=8080
+ExecStart=/usr/bin/python3 /opt/backup-manager-local/run.py
+Restart=on-failure
+RestartSec=3
+UMask=0027
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

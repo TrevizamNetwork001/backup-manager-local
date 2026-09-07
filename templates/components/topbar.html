@@ -1,0 +1,29 @@
+<header class="topbar">
+  <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-controls="main-sidebar" aria-expanded="false">☰</button>
+  <div class="environment"><span>Ambiente:</span><strong>Todos</strong></div>
+  <div class="topbar-tools">
+    <span class="topbar-status" title="Sistema online"></span>
+    <a class="topbar-notifications" href="/audit" aria-label="Abrir notificações e auditoria">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/></svg>
+      <span aria-hidden="true">1</span>
+    </a>
+    <div class="topbar-user">
+      <div class="topbar-user-text"><strong class="topbar-user-name">{{full_name}}</strong><small class="topbar-user-meta">IP {{client_ip}}</small></div>
+      <details class="topbar-account-menu">
+        <summary class="avatar" aria-label="Abrir menu da conta" title="Menu da conta">{{avatar_content}}</summary>
+        <section class="topbar-account-popover" aria-label="Opções da conta">
+          <header><span class="avatar" aria-hidden="true">{{avatar_content}}</span><div><strong>{{full_name}}</strong><small>{{username}} · IP {{client_ip}}</small></div></header>
+          <a class="topbar-account-action" href="/change-password"><span aria-hidden="true">🔒</span><div><strong>Alterar senha</strong><small>Atualize sua senha de acesso</small></div></a>
+          <details class="topbar-avatar-editor">
+            <summary><span aria-hidden="true">◉</span><div><strong>Trocar ícone do avatar</strong><small>Escolha como seu perfil aparece</small></div></summary>
+            <form method="post" action="/profile/avatar">
+              <input type="hidden" name="csrf_token" value="{{avatar_csrf}}">
+              <fieldset><legend>Escolha um ícone</legend><div class="avatar-choice-grid">{{avatar_options}}</div></fieldset>
+              <button type="submit">Salvar ícone</button>
+            </form>
+          </details>
+        </section>
+      </details>
+    </div>
+  </div>
+</header>

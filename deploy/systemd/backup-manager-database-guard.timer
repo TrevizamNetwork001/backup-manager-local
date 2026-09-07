@@ -1,0 +1,11 @@
+[Unit]
+Description=Verify and back up Backup Manager SQLite periodically
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=1h
+Persistent=true
+RandomizedDelaySec=5min
+
+[Install]
+WantedBy=timers.target

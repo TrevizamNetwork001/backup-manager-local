@@ -1,0 +1,21 @@
+[Unit]
+Description=Backup Manager Local - atualização local assinada
+After=local-fs.target
+ConditionPathExists=/opt/backup-manager-local/scripts/update-helper.py
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/opt/backup-manager-local
+ExecStart=/usr/bin/python3 /opt/backup-manager-local/scripts/update-helper.py apply
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/backup-manager-local /var/lib/backup-manager-local/updates /var/backups/backup-manager-local/updates /etc/systemd/system
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+TimeoutStartSec=15min
+

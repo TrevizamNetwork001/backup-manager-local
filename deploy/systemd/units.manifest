@@ -1,0 +1,19 @@
+# profile unit
+both backup-manager-local.service
+both backup-manager-worker.service
+both backup-manager-worker.timer
+both backup-manager-ftp-importer.service
+both backup-manager-ftp-importer.timer
+both backup-manager-lifecycle.service
+both backup-manager-lifecycle.timer
+both backup-manager-observability.service
+both backup-manager-observability.timer
+both backup-manager-database-guard.service
+both backup-manager-database-guard.timer
+both backup-manager-cloud-sync.service
+both backup-manager-cloud-sync.timer
+both backup-manager-telegram-backup.service
+both backup-manager-telegram-backup.timer
+update backup-manager-update-check.service
+update backup-manager-update-check.timer
+update backup-manager-update-download.service

@@ -1,0 +1,11 @@
+[Unit]
+Description=Backup Manager Local Worker Timer
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1min
+AccuracySec=15s
+Unit=backup-manager-worker.service
+
+[Install]
+WantedBy=timers.target

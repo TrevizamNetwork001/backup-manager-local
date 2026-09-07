@@ -1,0 +1,30 @@
+[Unit]
+Description=Backup Manager Local - importador FTP
+After=local-fs.target
+ConditionPathExists=/var/lib/backup-manager-local/ftp-incoming
+
+[Service]
+Type=oneshot
+User=root
+Group=backupftp
+WorkingDirectory=/opt/backup-manager-local
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -m backup_manager.ftp_importer
+TimeoutStartSec=120
+UMask=0027
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictRealtime=yes
+SystemCallArchitectures=native
+ReadWritePaths=/var/lib/backup-manager-local /opt/backup-manager-local/data
+
+[Install]
+WantedBy=multi-user.target
