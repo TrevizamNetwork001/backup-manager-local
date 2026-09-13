@@ -35,7 +35,7 @@ AUDIT_EVENTS = {
     "lifecycle.backup_restored": ("backup_restored", "info", "Backup restaurado"),
     "cloud.sync_failed": ("cloud.sync_failed", "critical", "Sincronização simulada falhou"),
     "cloud.sync_retry_scheduled": ("cloud.sync_failed", "warning", "Retry de sincronização agendado"),
-    "cloud.rclone_upload_success": ("cloud.upload_completed", "info", "Cópia externa concluída"),
+    "cloud.rclone_upload_success": ("cloud.upload_completed", "info", "Backup enviado ao Google Drive"),
 }
 
 
@@ -504,7 +504,7 @@ def _rclone_notification(conn, row, details: dict, channel_row) -> tuple[str, st
         WHERE i.uuid=?""", (row["entity_id"],)).fetchone()
     timestamp = _display_time(channel_row, row["created_at"])
     if not item:
-        return ("Cópia externa concluída", f"✅ Backup enviado via rclone\n🕒 Horário: {timestamp}",
+        return ("Backup enviado ao Google Drive", f"✅ Backup enviado via rclone\n🕒 Horário: {timestamp}",
                 f"rclone:{row['entity_id'] or row['id']}")
     remote_path = str(item["remote_object_id"] or "")
     folder = remote_path.rsplit("/", 1)[0] if "/" in remote_path else remote_path
@@ -514,7 +514,7 @@ def _rclone_notification(conn, row, details: dict, channel_row) -> tuple[str, st
                f"📁 Pasta: {folder or 'Pasta configurada'}\n"
                f"💾 Tamanho: {_display_size(item['bytes_uploaded'] or details.get('size'))}\n"
                f"🕒 Horário: {timestamp}")
-    return "Cópia externa concluída", message, f"rclone:{item['uuid']}"
+    return "Backup enviado ao Google Drive", message, f"rclone:{item['uuid']}"
 
 
 def _cleanup_notification(row, details: dict, channel_row, *, trash: bool) -> tuple[str, str, str] | None:
@@ -751,6 +751,7 @@ def dispatch(conn, transport: Transport | None = None, now: datetime | None = No
                     operational_icons = {
                         "ftp_received_file": "⚠️" if "sem identificação" in item["subject"].lower() else "✅",
                         "backup_completed": "✅",
+                        "cloud.upload_completed": "✅",
                         "equipment_without_backup": "⚠️", "backup_late": "⚠️",
                         "lifecycle_trash_cleanup": "🧹", "lifecycle_retention_cleanup": "🧹",
                     }

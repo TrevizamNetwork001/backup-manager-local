@@ -46,3 +46,5 @@ documentação operacional atual:
 - [Auditoria FTP](FTP_AUDIT.md)
 - [Arquivos da referência visual do login](LOGIN_UI_FILES.md)
 - [Validação RC1](RC1_VALIDATION.md)
+
+- [Incidente Google Drive e recuperação — 13/09/2026](INCIDENTE_GOOGLE_DRIVE_2026-09-13.md)

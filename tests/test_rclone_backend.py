@@ -156,7 +156,7 @@ class RcloneBackendTest(unittest.TestCase):
             subject, message, _ = _rclone_notification(conn, audit_row, {}, channel)
         self.assertEqual(before,after)
         self.assertEqual((item["status"],item["remote_object_id"],item["bytes_uploaded"]),("synced","cofre:BackupManager/router.rsc",len(content)))
-        self.assertEqual(subject, "Cópia externa concluída")
+        self.assertEqual(subject, "Backup enviado ao Google Drive")
         self.assertIn("Equipamento: Rclone Router", message)
         self.assertIn("Destino: Cofre rclone", message)
         self.assertIn("Pasta: cofre:BackupManager", message)
