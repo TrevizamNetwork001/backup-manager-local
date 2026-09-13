@@ -216,6 +216,7 @@ DISPLAY_TIME_FORMAT: ContextVar[str] = ContextVar("display_time_format", default
 REQUEST_IP: ContextVar[str] = ContextVar("request_ip", default="")
 REQUEST_CSRF: ContextVar[str] = ContextVar("request_csrf", default="")
 GOOGLE_RCLONE_CALLBACK_PATH = "/cloud/rclone/google/callback"
+CSRF_EXEMPT_POST_PATHS = {"/login", "/setup"}
 
 
 @dataclass
@@ -365,12 +366,20 @@ def now_utc() -> datetime:
 
 
 def parse_form(environ: dict) -> dict[str, str]:
+    cached = environ.get("backup_manager.parsed_form")
+    if isinstance(cached, dict):
+        return cached
     length = int(environ.get("CONTENT_LENGTH") or 0)
     raw = environ["wsgi.input"].read(length).decode("utf-8")
-    return {key: values[-1] for key, values in parse_qs(raw).items()}
+    form = {key: values[-1] for key, values in parse_qs(raw).items()}
+    environ["backup_manager.parsed_form"] = form
+    return form
 
 
 def parse_multipart(environ: dict) -> tuple[dict[str, str], dict[str, UploadedFile]]:
+    cached = environ.get("backup_manager.parsed_multipart")
+    if isinstance(cached, tuple):
+        return cached
     content_type = environ.get("CONTENT_TYPE", "")
     match = re.search(r"boundary=(?P<boundary>[^;]+)", content_type)
     if not match:
@@ -403,7 +412,10 @@ def parse_multipart(environ: dict) -> tuple[dict[str, str], dict[str, UploadedFi
             files[name] = UploadedFile(filename_match.group(1), io.BytesIO(payload))
         else:
             fields[name] = payload.decode("utf-8", errors="replace")
-    return fields, files
+    parsed = (fields, files)
+    environ["backup_manager.parsed_multipart"] = parsed
+    environ["backup_manager.parsed_form"] = fields
+    return parsed
 
 
 def cookie_token(environ: dict) -> str | None:
@@ -420,6 +432,30 @@ def session_csrf(environ: dict) -> str:
 def valid_session_csrf(environ: dict,value: str) -> bool:
     expected=session_csrf(environ)
     return bool(expected and hmac.compare_digest(expected,value or ""))
+
+
+def request_csrf_value(environ: dict) -> str:
+    header = str(environ.get("HTTP_X_CSRF_TOKEN", "")).strip()
+    if header:
+        return header
+    content_type = environ.get("CONTENT_TYPE", "").lower()
+    try:
+        if content_type.startswith("multipart/form-data"):
+            fields, _ = parse_multipart(environ)
+            return fields.get("csrf_token", "")
+        return parse_form(environ).get("csrf_token", "")
+    except (OSError, ValueError):
+        return ""
+
+
+def csrf_protect(environ: dict) -> Response | None:
+    if environ.get("REQUEST_METHOD") != "POST":
+        return None
+    if environ.get("PATH_INFO", "") in CSRF_EXEMPT_POST_PATHS:
+        return None
+    if valid_session_csrf(environ, request_csrf_value(environ)):
+        return None
+    return Response("Token CSRF inválido.", HTTPStatus.FORBIDDEN)
 
 
 def set_session_cookie(token: str) -> tuple[str, str]:
@@ -4965,6 +5001,9 @@ def _application(environ: dict, start_response):
     method = environ.get("REQUEST_METHOD", "GET")
     if method not in {"GET", "HEAD", "OPTIONS"} and environ.get("HTTP_SEC_FETCH_SITE", "").lower() == "cross-site":
         return _emit_wsgi(start_response, Response("Requisição entre sites recusada.", HTTPStatus.FORBIDDEN))
+    csrf_response = csrf_protect(environ)
+    if csrf_response:
+        return _emit_wsgi(start_response, csrf_response)
     if method == "GET" and path == "/health/live":
         return _emit_wsgi(start_response, json_response({"live": True}))
     if method == "GET" and path == "/health/ready":

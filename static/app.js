@@ -13,6 +13,16 @@
     }
     return nativeFetch(input, init);
   };
+  if (csrfToken) {
+    document.querySelectorAll('form[method="post"]').forEach((form) => {
+      if (form.querySelector('input[name="csrf_token"]')) return;
+      const field = document.createElement("input");
+      field.type = "hidden";
+      field.name = "csrf_token";
+      field.value = csrfToken;
+      form.prepend(field);
+    });
+  }
   if (document.querySelector("[data-system-refresh]")) {
     window.setTimeout(() => window.location.reload(), 60000);
   }
