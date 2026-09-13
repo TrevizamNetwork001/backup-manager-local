@@ -48,3 +48,5 @@ documentação operacional atual:
 - [Validação RC1](RC1_VALIDATION.md)
 
 - [Incidente Google Drive e recuperação — 13/09/2026](INCIDENTE_GOOGLE_DRIVE_2026-09-13.md)
+
+- [Manutenção operacional — 13/09/2026](MANUTENCAO_2026-09-13.md)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
@@ -29,6 +30,18 @@ def store_backup(conn, *, equipment_id: int, source: Path, original_filename: st
                  (backup_uuid, equipment_id, original_filename, target.name, relative, file_size, digest,
                   received_at.strftime("%Y-%m-%d %H:%M:%S"), notes))
     backup_id = conn.execute("SELECT id FROM backups WHERE uuid=?", (backup_uuid,)).fetchone()[0]
+    # FTP uploads may carry write-only modes and the FTP account's group.
+    # Managed backups must be readable by workers in the storage group.
+    target.parent.mkdir(parents=True, exist_ok=True)
+    storage_root = config.backup_directory.resolve()
+    storage_gid = storage_root.stat().st_gid
+    directory = target.parent
+    while directory != storage_root:
+        os.chown(directory, -1, storage_gid)
+        directory.chmod(0o750)
+        directory = directory.parent
+    os.chown(source, -1, storage_gid)
+    source.chmod(0o640)
     atomic_move(source, target)
     conn.execute("UPDATE backups SET backup_status='available' WHERE id=?", (backup_id,))
     return StoredBackup(backup_id, backup_uuid, target.name, relative)

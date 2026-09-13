@@ -62,3 +62,19 @@ renovar a autorização no formulário Conectar com Google usando o cliente
 existente. Os dados do cliente ficam no Google Cloud, em APIs e serviços →
 Credenciais. Após autorizar, testar o destino e só então reenfileirar as falhas.
 Não é necessário criar outro projeto ou apagar os backups para reconectar.
+
+
+## Complemento da manutenção
+
+O título genérico de falha foi corrigido para “Falha na sincronização externa”,
+removendo a indicação indevida de simulação.
+
+A documentação oficial do Google confirma que aplicativos externos com status
+Testing recebem refresh tokens com validade de sete dias quando usam escopos
+como o Drive. O aviso relatado pelo usuário é compatível com esse cenário,
+mas o status atual do projeto ainda precisa ser confirmado no console da conta.
+Para eliminar essa limitação de teste, revisar Google Auth Platform →
+Público-alvo, colocar o aplicativo em produção e renovar a autorização depois.
+Isso não garante imunidade a revogações futuras.
+
+Fonte: https://developers.google.com/identity/protocols/oauth2#expiration

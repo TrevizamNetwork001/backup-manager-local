@@ -195,6 +195,32 @@ class TelegramAdvancedTests(unittest.TestCase):
         row = self.conn.execute("SELECT status,telegram_message_id FROM telegram_backup_items WHERE id=?", (item,)).fetchone()
         self.assertEqual(("sent", "321"), tuple(row))
 
+    def test_ftp_storage_normalizes_permissions_for_backup_workers(self):
+        from backup_manager.ftp_storage import store_backup
+        source = self.storage / "temporary" / "ftp-upload.cfg"
+        content = b"configuration\n"
+        source.write_bytes(content)
+        source.chmod(0o300)
+        stored = store_backup(self.conn, equipment_id=self.equipment, source=source,
+                              original_filename="ftp-upload.cfg", file_size=len(content),
+                              digest=hashlib.sha256(content).hexdigest(),
+                              received_at=datetime.now(timezone.utc), notes="")
+        target = self.storage / "backups" / stored.relative_path
+        self.assertEqual(0o640, target.stat().st_mode & 0o777)
+        self.assertEqual((self.storage / "backups").stat().st_gid, target.stat().st_gid)
+        self.assertEqual(0o750, target.parent.stat().st_mode & 0o777)
+        self.assertEqual(content, target.read_bytes())
+
+    def test_unreadable_backup_does_not_crash_queue(self):
+        backup_id, target = self.backup()
+        enqueue_backup(self.conn, backup_id)
+        item = self.conn.execute("SELECT id FROM telegram_backup_items").fetchone()[0]
+        with mock.patch("backup_manager.telegram_backup.sha256_file", side_effect=PermissionError):
+            self.assertEqual("skipped", process_item(self.conn, item, transport=FakeDocumentTransport()))
+        row = self.conn.execute("SELECT error_code FROM telegram_backup_items WHERE id=?", (item,)).fetchone()
+        self.assertEqual("BACKUP_FILE_UNREADABLE", row[0])
+        self.assertTrue(target.is_file())
+
     def test_size_limit_skips_without_splitting_or_changing_backup(self):
         backup_id, target = self.backup(b"0123456789")
         self.conn.execute("UPDATE settings SET value='5' WHERE key='telegram_public_max_file_bytes'")

@@ -232,6 +232,7 @@ class PresentationArchitectureTests(unittest.TestCase):
                 validate_css(invalid)
 
     def test_versioned_assets_and_cache_headers(self) -> None:
+        migrate(31)
         client = WsgiClient()
         status, headers, body = client.request("GET", "/login")
         self.assertTrue(status.startswith("200"))

@@ -32,6 +32,15 @@ class TelegramDestinationCleanupTests(unittest.TestCase):
         self.assertEqual("suppressed",self.conn.execute("SELECT status FROM notification_queue").fetchone()[0])
         self.assertEqual(2,self.conn.execute("SELECT COUNT(*) FROM telegram_destination_actions").fetchone()[0])
 
+    def test_caption_uses_configured_timezone_and_handles_date_boundary(self):
+        stamp = datetime(2026, 9, 13, 1, 8, tzinfo=timezone.utc)
+        caption = render_telegram_backup_caption({}, "backup.cfg", 1, now=stamp,
+                                                  timezone_name="America/Sao_Paulo")
+        self.assertIn("Enviado em: 12/09/2026 22:08", caption)
+        caption = render_telegram_backup_caption({}, "backup.cfg", 1, now=stamp,
+                                                  timezone_name="UTC")
+        self.assertIn("Enviado em: 13/09/2026 01:08", caption)
+
     def test_premium_caption_escapes_and_omits_missing(self):
         caption=render_telegram_backup_caption(
             {"hostname":"OLT <Centro>","group_name":"Laboratório & QA","vendor":"ignorado",
@@ -42,7 +51,7 @@ class TelegramDestinationCleanupTests(unittest.TestCase):
             "🏷️ Grupo: Laboratório &amp; QA\n"
             "🖥️ Equipamento: OLT &lt;Centro&gt;\n"
             "📄 Arquivo: x&amp;y.zip\n"
-            "🕒 Data: 16/07/2026 10:55",
+            "🕒 Enviado em: 16/07/2026 07:55",
             caption,
         )
         for forbidden in ("SHA-256", "Método", "Fabricante", "v1.1.0", "Enviando"):

@@ -33,7 +33,7 @@ AUDIT_EVENTS = {
     "lifecycle.executed": ("lifecycle_retention_cleanup", "info", "Limpeza de backups expirados concluída"),
     "lifecycle.trash_emptied": ("lifecycle_trash_cleanup", "info", "Limpeza da lixeira concluída"),
     "lifecycle.backup_restored": ("backup_restored", "info", "Backup restaurado"),
-    "cloud.sync_failed": ("cloud.sync_failed", "critical", "Sincronização simulada falhou"),
+    "cloud.sync_failed": ("cloud.sync_failed", "critical", "Falha na sincronização externa"),
     "cloud.sync_retry_scheduled": ("cloud.sync_failed", "warning", "Retry de sincronização agendado"),
     "cloud.rclone_upload_success": ("cloud.upload_completed", "info", "Backup enviado ao Google Drive"),
 }

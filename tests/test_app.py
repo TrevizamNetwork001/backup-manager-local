@@ -2494,6 +2494,19 @@ class BackupManagerAppTest(unittest.TestCase):
             self.assertEqual("10.20.30.0/24", rolled_back["allowed_source_cidr"])
             self.assertEqual("mikrotik", rolled_back["upload_subdirectory"])
 
+    def test_dashboard_telegram_alert_links_open_queue_and_activity_opens_events(self):
+        self.login_ready_admin()
+        with connect() as conn:
+            snapshot = dashboard_snapshot(conn)
+        snapshot["alerts"] = [{"level": "yellow", "source": "Telegram backup", "message": "80 itens com fila parada"}]
+        with mock.patch("backup_manager.app.dashboard_snapshot", return_value=snapshot):
+            status, _, body = self.client.request("GET", "/")
+        self.assertTrue(status.startswith("200"))
+        self.assertIn('href="/telegram-backup?view=queue">ver detalhes</a>', body)
+        self.assertIn('href="/telegram-backup?view=queue">Ver detalhes', body)
+        self.assertIn('href="/reports/audit">Ver todos os eventos</a>', body)
+        self.assertNotIn('href="#alertas-atuais"', body)
+
     def test_ftp_stable_file_is_imported_and_audited(self) -> None:
         self.login_ready_admin()
         with connect() as conn:

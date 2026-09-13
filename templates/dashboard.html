@@ -1,7 +1,7 @@
 <section class="dashboard-reference-page">
   <header class="dashboard-reference-head">
     <div><span class="eyebrow">Centro de Operações</span><h1>{{install_name}}</h1><p>{{provider}} · atualizado em {{generated_at}}</p></div>
-    <a class="dashboard-global-state status-{{level}}" href="#alertas-atuais" data-technical-level="{{technical_level}}">
+    <a class="dashboard-global-state status-{{level}}" href="{{attention_details_url}}" data-technical-level="{{technical_level}}">
       <i><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></i>
       <span><small>Estado geral</small><strong>{{level_label}}</strong><em>{{alert_count}}</em></span><b>Ver detalhes ›</b>
     </a>
@@ -15,7 +15,7 @@
 
   <section class="dashboard-reference-columns">
     <div class="dashboard-reference-left">
-      <article class="panel dashboard-attention" id="alertas-atuais"><header><i><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></i><h2>Precisa de atenção</h2></header><ul>{{attention_lines}}</ul><a href="/jobs">Ver detalhes <span>→</span></a></article>
+      <article class="panel dashboard-attention" id="alertas-atuais"><header><i><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10.3 3.6 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></i><h2>Precisa de atenção</h2></header><ul>{{attention_lines}}</ul><a href="{{attention_details_url}}">Ver detalhes <span>→</span></a></article>
       <article class="panel dashboard-activity"><h2>Atividade recente</h2><ul>{{activity_lines}}</ul>{{timeline_link}}</article>
     </div>
     <div class="dashboard-reference-right">

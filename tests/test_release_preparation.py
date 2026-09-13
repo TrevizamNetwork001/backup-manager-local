@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import runpy
 import tempfile
 import unittest
 from pathlib import Path
@@ -34,6 +35,16 @@ class ReleasePreparationTest(unittest.TestCase):
         patcher = mock.patch.object(release, "PUBLIC_SHA256", hashlib.sha256(der).hexdigest())
         patcher.start()
         self.addCleanup(patcher.stop)
+        # Exercise signing against the current test source, independently of
+        # the immutable production fingerprint for the original 1.1.0 release.
+        builder = runpy.run_path(str(ROOT / "scripts/build-update-package.py"))
+        aggregate = hashlib.sha256()
+        for relative in sorted(builder["collect"](), key=lambda path: path.as_posix()):
+            digest = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+            aggregate.update(relative.as_posix().encode() + b"\0" + digest.encode() + b"\n")
+        payload_patch = mock.patch.object(release, "PAYLOAD_SHA256", aggregate.hexdigest())
+        payload_patch.start()
+        self.addCleanup(payload_patch.stop)
         self.output = self.root / "ready"
 
     def write_private(self, private):

@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from .security import decrypt_secret
 from .storage import load_config, resolve_inside, safe_filename, sha256_file
@@ -260,9 +261,12 @@ def is_backup_eligible(conn, backup_id: int, destination_id: int, policy_id: int
     try:
         path = resolve_inside(load_config(conn).backup_directory, backup["relative_path"])
     except (ValueError, OSError): return Eligibility(False, "BACKUP_FILE_MISSING", "Arquivo local ausente ou inválido.")
-    if path.is_symlink() or not path.is_file(): return Eligibility(False, "BACKUP_FILE_MISSING", "Arquivo local ausente ou inválido.")
-    if path.stat().st_size != backup["file_size"]: return Eligibility(False, "BACKUP_SIZE_MISMATCH", "Tamanho local não confere.")
-    if not backup["sha256"] or sha256_file(path) != backup["sha256"]: return Eligibility(False, "BACKUP_HASH_MISMATCH", "SHA-256 local não confere.")
+    try:
+        if path.is_symlink() or not path.is_file(): return Eligibility(False, "BACKUP_FILE_MISSING", "Arquivo local ausente ou inválido.")
+        if path.stat().st_size != backup["file_size"]: return Eligibility(False, "BACKUP_SIZE_MISMATCH", "Tamanho local não confere.")
+        if not backup["sha256"] or sha256_file(path) != backup["sha256"]: return Eligibility(False, "BACKUP_HASH_MISMATCH", "SHA-256 local não confere.")
+    except OSError:
+        return Eligibility(False, "BACKUP_FILE_UNREADABLE", "Sem acesso de leitura ao arquivo local.")
     return Eligibility(True)
 
 
@@ -341,8 +345,15 @@ def _field(item, key):
     return "" if value is None else str(value).strip()
 
 
-def render_telegram_backup_caption(item, filename: str, size: int, *, now=None) -> str:
+def render_telegram_backup_caption(item, filename: str, size: int, *, now=None, timezone_name="America/Sao_Paulo") -> str:
     current = now or datetime.now(timezone.utc)
+    if current.tzinfo is None:
+        current = current.replace(tzinfo=timezone.utc)
+    try:
+        zone = ZoneInfo(timezone_name)
+    except (ZoneInfoNotFoundError, ValueError):
+        zone = ZoneInfo("America/Sao_Paulo")
+    current = current.astimezone(zone)
     x = lambda value: escape(str(value), quote=False)
     lines = ["✅ Backup concluído"]
     if group := _field(item, "group_name"):
@@ -350,7 +361,7 @@ def render_telegram_backup_caption(item, filename: str, size: int, *, now=None) 
     lines.extend((
         f"🖥️ Equipamento: {x(_field(item, 'hostname') or 'Equipamento')}",
         f"📄 Arquivo: {x(filename)}",
-        f"🕒 Data: {current:%d/%m/%Y %H:%M}",
+        f"🕒 Enviado em: {current:%d/%m/%Y %H:%M}",
     ))
     return "\n".join(lines)
 
@@ -414,7 +425,7 @@ def process_item(conn, item_id: int, *, transport=None, now: datetime | None = N
         # Uploads can approach the systemd ten-minute timeout. Persist the
         # lease and release SQLite before the network transfer.
         conn.commit()
-        message_id, bytes_sent = sender.send_document(token, item["chat_id"], item["thread_id"], prepared, filename, render_telegram_backup_caption(item, filename, final_size, now=current), telegram_api_base(conn))
+        message_id, bytes_sent = sender.send_document(token, item["chat_id"], item["thread_id"], prepared, filename, render_telegram_backup_caption(item, filename, final_size, now=now, timezone_name=_setting(conn, "timezone", "America/Sao_Paulo")), telegram_api_base(conn))
         conn.execute("""UPDATE telegram_backup_items SET status='sent',telegram_message_id=?,bytes_sent=?,sent_at=?,finished_at=?,duration_ms=?,
             safe_log='Documento enviado ao Telegram; backup local preservado.',updated_at=CURRENT_TIMESTAMP WHERE id=?""",
             (str(message_id)[:80], min(int(bytes_sent), final_size), _stamp(current), _stamp(current), int((time.monotonic()-started)*1000), item_id))
@@ -514,7 +525,7 @@ def process_test_files(conn, *, transport=None, limit: int = 2) -> dict[str, int
                 raise TelegramBackupError("TELEGRAM_NOT_CONFIGURED", "Bot Telegram não configurado.")
             path = create_test_file(conn); sender = transport or TelegramDocumentTransport()
             message_id, _ = sender.send_document(decrypt_secret(channel["token_encrypted"]), row["chat_id"], row["default_thread_id"],
-                path, "arquivo-teste-backup-manager.txt", render_telegram_backup_caption({"hostname":"Equipamento de teste","source_method":"teste"}, "arquivo-teste-backup-manager.txt", path.stat().st_size), telegram_api_base(conn))
+                path, "arquivo-teste-backup-manager.txt", render_telegram_backup_caption({"hostname":"Equipamento de teste","source_method":"teste"}, "arquivo-teste-backup-manager.txt", path.stat().st_size, timezone_name=_setting(conn, "timezone", "America/Sao_Paulo")), telegram_api_base(conn))
             conn.execute("UPDATE telegram_test_items SET status='sent',message_id=?,finished_at=CURRENT_TIMESTAMP WHERE id=?", (str(message_id)[:80], row["id"]))
             result["test_sent"] += 1
         except Exception:

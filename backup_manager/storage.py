@@ -78,7 +78,7 @@ def ensure_directories(config: StorageConfig) -> None:
     for path in (config.storage_root, config.backup_directory, config.trash_directory, config.quarantine_directory, config.temporary_directory):
         path.mkdir(parents=True, exist_ok=True)
         try:
-            path.chmod(0o750)
+            path.chmod(0o770 if path == config.temporary_directory else 0o750)
         except OSError:
             pass
 
